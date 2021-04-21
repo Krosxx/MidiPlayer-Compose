@@ -7,18 +7,9 @@ import javax.sound.midi.MidiSystem
 object MidiDeviceManager {
 
     val soft by lazy {
-        MidiSystem.getReceiver().also {
-            (it as SoftReceiver).midiDevice.open()
-        }
-//        SoftReceiver(SoftSynthesizer().also {
-////            val sf2File = File("/Users/liben/Downloads/FluidR3_GM.sf2")
-////            if(sf2File.exists()) {
-////                val dsbf = SoftSynthesizer::class.java.getDeclaredField("defaultSoundBank")
-////                dsbf.isAccessible = true
-////                dsbf.set(null, SF2Soundbank())
-////            }
-//            it.open()
-//        })
+        SoftReceiver(SoftSynthesizer().also {
+            it.open()
+        })
     }
 
     fun getDeviceList(): Array<MidiDevice.Info> {

@@ -42,8 +42,8 @@ fun main() = Window(title = "JMidiPlayer-Compose", size = IntSize(300, 300)) {
     }
 
     fun initDevice() {
-        refreshMidiDevice()
         outputDevices["Soft"] = MidiDeviceManager.soft
+        refreshMidiDevice()
         midiDevices.forEach {
             val rev = it.receiver
             it.open()

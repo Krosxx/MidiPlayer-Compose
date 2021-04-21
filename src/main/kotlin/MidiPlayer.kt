@@ -9,6 +9,7 @@ class MidiPlayer(val midFile: File) {
     private val receivers = mutableSetOf<Receiver>()
     val seq = MidiSystem.getSequence(midFile)
     val midip by lazy { MidiSystem.getSequencer(false) }
+    var startTime = -1L
 
     fun start() {
         if (midip.isRunning) {
@@ -22,7 +23,15 @@ class MidiPlayer(val midFile: File) {
             }
 
             override fun send(message: MidiMessage?, timeStamp: Long) {
-                println("send ${message?.message?.contentToString()} to ${receivers.size}")
+                message ?: return
+                if (message.message[0] == 0x90.toByte()) {
+                    if (startTime < 0) {
+                        startTime = System.currentTimeMillis()
+                    }
+                    val ind = (System.currentTimeMillis() - startTime) / 32
+                    println("" + message.message[1] + "  " + ind)
+                }
+//                println("send ${message?.message?.contentToString()} to ${receivers.size}")
                 receivers.forEach {
                     it.send(message, timeStamp)
                 }
@@ -36,6 +45,7 @@ class MidiPlayer(val midFile: File) {
     fun stop() {
         if (midip.isRunning) midip.stop()
         if (midip.isOpen) midip.close()
+        startTime = -1L
     }
 
     fun addReceiver(receiver: Receiver) {
